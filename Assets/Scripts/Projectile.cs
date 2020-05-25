@@ -5,22 +5,21 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     public LayerMask damageLayer;
-    int maxHits = 1;
-    Vector2 direction = Vector2.up;
+    public Vector2 direction = Vector2.up;
     public float projectileSpeed = 10f;
-    [SerializeField]
-    float hitboxRadius = 0.5f;
+    public float hitboxRadius = 0.5f;
     public GameObject explosionPrefab;
     ProjectileShooter launcher; //launcher which created this projectile
 
-    void SetDirection(Vector2 direction) {
-        this.direction = direction;
+    void SetDirection(Vector2 dir) {
+        this.direction = dir;
     }
 
     // Update is called once per frame
     void Update()
     {
         transform.Translate(direction * projectileSpeed * Time.deltaTime);
+
         Collider2D hit = Physics2D.OverlapCircle(transform.position, hitboxRadius, damageLayer);
         if (hit) {
             Detonate(hit);
@@ -30,7 +29,12 @@ public class Projectile : MonoBehaviour
     }
 
     void Detonate(Collider2D hit) {
-        Destroy(hit.gameObject);
+        //Destroy(hit.gameObject);
+        HitHandler hitHandler = hit.GetComponent<HitHandler>();
+        if (hitHandler) {
+            hitHandler.Hit();
+        }
+
         launcher.RemoveProjectile(gameObject);
         Destroy(gameObject);
         Instantiate(explosionPrefab, transform.position, Quaternion.identity);
@@ -41,9 +45,14 @@ public class Projectile : MonoBehaviour
     }
 
     void RemoveIfOutOfScreen() { 
-        if(transform.position.y > 5) {
+        if(Mathf.Abs(transform.position.y) > 5) {
             launcher.RemoveProjectile(gameObject);
             Destroy(gameObject);
         }
+    }
+
+    void OnDrawGizmos() {
+        //DEBUG
+        //Gizmos.DrawSphere(transform.position, hitboxRadius);
     }
 }

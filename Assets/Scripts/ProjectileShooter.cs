@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class ProjectileShooter : MonoBehaviour
 {
-    [SerializeField]
-    GameObject projectilePrefab;
-    [SerializeField]
-    GameObject shootingPoint;
+    public GameObject projectilePrefab;
+    public GameObject shootingPoint;
     List<GameObject> launchedProjectiles;
     public int maxLaunchedProjectiles = 2;
+    public LayerMask damageLayer;
 
     // Start is called before the first frame update
     void Start()
@@ -17,15 +16,20 @@ public class ProjectileShooter : MonoBehaviour
         launchedProjectiles = new List<GameObject>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space) && launchedProjectiles.Count < maxLaunchedProjectiles) {
-            GameObject projectile = Instantiate(projectilePrefab, shootingPoint.transform.position, Quaternion.identity);
-            Projectile projectileScript = projectile.GetComponent<Projectile>();
-            projectileScript.SetLauncher(this);
-            launchedProjectiles.Add(projectile);
+    public void Shoot(Vector2 direction){
+        if (launchedProjectiles.Count < maxLaunchedProjectiles){
+            CreateProjectile(direction);
         }
+    }
+
+    void CreateProjectile(Vector2 dir) {
+        GameObject projectile = Instantiate(projectilePrefab, shootingPoint.transform.position, Quaternion.identity);
+        Projectile projectileScript = projectile.GetComponent<Projectile>();
+        projectileScript.SetLauncher(this);
+        projectileScript.damageLayer = damageLayer;
+        projectileScript.direction = dir;
+        launchedProjectiles.Add(projectile);
+        projectile.SetActive(true);
     }
 
     public void RemoveProjectile(GameObject projectile) {
