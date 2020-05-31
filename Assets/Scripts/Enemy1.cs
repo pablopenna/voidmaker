@@ -31,7 +31,7 @@ public class Enemy1 : MonoBehaviour, BaseEntity
         UpdateDistanteToTarget();
         UpdateDistanteToSpawn();
 
-        CalculateState();
+        //CalculateState();
 
         if(state == EnemyState.ATTACKING) {
             MoveTowardsPlayer();
