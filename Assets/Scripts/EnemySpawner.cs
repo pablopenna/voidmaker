@@ -16,11 +16,18 @@ public class EnemySpawner : MonoBehaviour
         Camera cam = Camera.main;
         float camWidth = cam.aspect * 2f * cam.orthographicSize;
         float camHeight = 2f * cam.orthographicSize;
+
+        float spawnWidth = camWidth;
+        float spawnHeight = camHeight / 2;
+
         Vector3 initPoint = cam.ScreenToWorldPoint(Vector3.zero); //bottom left
         initPoint = new Vector3(initPoint.x, initPoint.y + camHeight, initPoint.z); // top left
         //Instantiate(enemyAPrefab,initPoint,Quaternion.identity);
+
+        transform.position = new Vector2(initPoint.x + spawnWidth / 2, initPoint.y - spawnHeight / 2);
+
         spawnPoints = new List<Vector2>();
-        GenerateSpawnPoints(initPoint, camWidth, camHeight/2, this.spawnColumns, this.spawnRows);
+        GenerateSpawnPoints(initPoint, spawnWidth, spawnHeight, this.spawnColumns, this.spawnRows);
         SpawnEnemies();
     }
 
@@ -42,7 +49,8 @@ public class EnemySpawner : MonoBehaviour
 
     void SpawnEnemies() {
         foreach (Vector2 spawnPoint in this.spawnPoints){
-            Instantiate(enemyAPrefab, spawnPoint, Quaternion.identity);
+            GameObject enemySpawned = Instantiate(enemyAPrefab, spawnPoint, Quaternion.identity);
+            enemySpawned.transform.parent = this.transform;
         }
     }
 

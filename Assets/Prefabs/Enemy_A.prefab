@@ -151,6 +151,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   horizontalDistanceToPlayerForShooting: 0.5
   moveSpeed: 2
+  maxDistance2Spawn: 0.5
 --- !u!114 &9011205638335842690
 MonoBehaviour:
   m_ObjectHideFlags: 0

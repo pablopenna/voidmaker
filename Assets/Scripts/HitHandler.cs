@@ -7,8 +7,7 @@ public class HitHandler : MonoBehaviour
     BaseEntity managedEntity;
 
     void Start() {
-        managedEntity = GetComponent<BaseEntity>(); //It works!
-        print(managedEntity);
+        managedEntity = GetComponent<BaseEntity>(); //It works! Can fetch by interface
     }
 
     public void Hit() {

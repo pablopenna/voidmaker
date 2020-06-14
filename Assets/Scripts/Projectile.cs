@@ -37,7 +37,7 @@ public class Projectile : MonoBehaviour
 
         launcher.RemoveProjectile(gameObject);
         Destroy(gameObject);
-        Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        Instantiate(explosionPrefab, hit.transform.position, Quaternion.identity);
     }
 
     public void SetLauncher(ProjectileShooter launcher) {

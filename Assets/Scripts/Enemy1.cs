@@ -15,6 +15,12 @@ public class Enemy1 : MonoBehaviour, BaseEntity
     public enum EnemyState { IDLE, ATTACKING, RETURNING };
     EnemyState state;
 
+    //Idle movement 
+    Vector2 trajectory;
+    float distanceToParent;
+    [SerializeField]
+    float maxDistance2Spawn = 0.1f;
+    bool isGoingTowardsParent;
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +29,10 @@ public class Enemy1 : MonoBehaviour, BaseEntity
         shooter = GetComponent<ProjectileShooter>();
         spawnPoint = transform.position;
         state = EnemyState.IDLE;
+
+        //Idle movement
+        trajectory = (Vector2)transform.parent.position - this.spawnPoint;
+        isGoingTowardsParent = true;
     }
 
     // Update is called once per frame
@@ -30,15 +40,17 @@ public class Enemy1 : MonoBehaviour, BaseEntity
     {
         UpdateDistanteToTarget();
         UpdateDistanteToSpawn();
+        UpdateDistanteToParent();
 
         //CalculateState();
 
-        if(state == EnemyState.ATTACKING) {
+        if (state == EnemyState.ATTACKING) {
             MoveTowardsPlayer();
         } else if(state == EnemyState.RETURNING) {
             MoveToSpawn();
         }
-
+        this.CheckShoot();
+        IdleMovement();
     }
 
     void CalculateState()
@@ -53,13 +65,16 @@ public class Enemy1 : MonoBehaviour, BaseEntity
     }
 
     void UpdateDistanteToTarget() {
-        Vector2 direction = target.transform.position - transform.position;
-        distanceToTarget = direction.magnitude;
+        distanceToTarget = Vector2.Distance(target.transform.position, transform.position);
     }
 
     void UpdateDistanteToSpawn() {
-        Vector2 direction = spawnPoint - (Vector2)transform.position;
-        distanceToSpawn = direction.magnitude;
+        distanceToSpawn = Vector2.Distance(spawnPoint, transform.position);
+        print(Mathf.Approximately(distanceToSpawn, 0f));
+    }
+
+    void UpdateDistanteToParent() {
+        distanceToParent = Vector2.Distance(transform.parent.position, transform.position);
     }
 
 
@@ -71,7 +86,7 @@ public class Enemy1 : MonoBehaviour, BaseEntity
         MoveTowardsPoint(spawnPoint, false);
     }
 
-    void MoveTowardsPoint(Vector2 targetPoint, bool addSideMovement = false) {
+    void MoveTowardsPoint(Vector2 targetPoint, float lMoveSpeed, bool addSideMovement = false) {
         Vector2 direction = targetPoint - (Vector2)transform.position;
         direction.Normalize();
         if (addSideMovement) {
@@ -79,7 +94,26 @@ public class Enemy1 : MonoBehaviour, BaseEntity
             direction = new Vector2(direction.x + sideMovement, direction.y + sideMovement);
             direction.Normalize();
         }
-        transform.Translate(direction * moveSpeed * Time.deltaTime);
+        transform.Translate(direction * lMoveSpeed * Time.deltaTime);
+    }
+
+    void MoveTowardsPoint(Vector2 targetPoint, bool addSideMovement = false) {
+        MoveTowardsPoint(targetPoint, this.moveSpeed, addSideMovement);
+    }
+
+    void IdleMovement() {
+        if (distanceToSpawn < 0.1f) {
+            isGoingTowardsParent = true;
+        }
+        else if (distanceToSpawn >= maxDistance2Spawn || Mathf.Approximately(distanceToParent, 0f)) {
+            isGoingTowardsParent = false;
+        }
+
+        if (isGoingTowardsParent) {
+            MoveTowardsPoint(transform.parent.position, 0.1f);
+        } else {
+            MoveTowardsPoint(spawnPoint, 0.1f);
+        }
     }
 
     void CheckShoot() {
@@ -91,7 +125,6 @@ public class Enemy1 : MonoBehaviour, BaseEntity
     }
 
     void BaseEntity.Destroy() {
-        //Destroy(gameObject);
-        print("Dead");
+        Destroy(gameObject);
     }
 }

@@ -351,7 +351,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.50058556, y: 1}
   m_EdgeRadius: 0
 --- !u!114 &1201347726
 MonoBehaviour:
@@ -516,6 +516,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyAPrefab: {fileID: 9011205638335842691, guid: 8bbdc44a11f052f5faab44457fe949e9,
     type: 3}
+  spawnColumns: 10
+  spawnRows: 5
 --- !u!4 &1571456240
 Transform:
   m_ObjectHideFlags: 0

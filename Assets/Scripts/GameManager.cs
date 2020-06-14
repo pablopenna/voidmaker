@@ -13,7 +13,6 @@ public class GameManager : MonoBehaviour
         } else {
             Destroy(gameObject);
         }
-        print("singleton: " + instance);
     }
 
     public void GameOver() {
