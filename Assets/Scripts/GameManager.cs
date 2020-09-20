@@ -12,6 +12,12 @@ public class GameManager : MonoBehaviour
         public Vector2 bottomLeft;
     }
     public ScreenDimensions gameDimensions;
+    public struct DistanceToScreenBorder {
+        public float distanceTop;
+        public float distanceBottom;
+        public float distanceLeft;
+        public float distanceRight;
+    }
 
     void Start()
     {
@@ -45,22 +51,39 @@ public class GameManager : MonoBehaviour
     }
 
     /**
-    * It checks if the bound is COMPLETElY out of the screen (or partially in the screen)
+    * It checks if the bound is COMPLETELY OUT of the screen (or partially in the screen)
     * That is why checks are like
     *   bounds.min.y > gameDimensions.topLeft.y
     * instead of
     *   bounds.max.y > gameDimensions.topLeft.y
     */
-    public bool AreBoundsInsideScreen(Bounds bounds, Vector2 movement) {
+    public bool AreBoundsPartiallyInsideScreen(Bounds bounds, Vector2 movement) {
         return bounds.min.y + movement.y < gameDimensions.topLeft.y &&
             bounds.max.y + movement.y > gameDimensions.bottomLeft.y &&
             bounds.min.x + movement.x < gameDimensions.topRight.x &&
             bounds.max.x + movement.x > gameDimensions.bottomLeft.x;
     }
     
-    public bool AreBoundsInsideScreen(Bounds bounds) {
-        return AreBoundsInsideScreen(bounds, Vector2.zero);
+    //Check if bounds are completely in the screen
+    public bool AreBoundsInsideScreen(Bounds bounds, Vector2 movement) {
+        return bounds.max.y + movement.y <= gameDimensions.topLeft.y &&
+            bounds.min.y + movement.y >= gameDimensions.bottomLeft.y &&
+            bounds.max.x + movement.x <= gameDimensions.topRight.x &&
+            bounds.min.x + movement.x >= gameDimensions.bottomLeft.x;
     }
+    
+    //Values are positive if inside screen
+    public DistanceToScreenBorder GetBoundsDistanceToBorder(Bounds bounds) {
+        DistanceToScreenBorder distance = new DistanceToScreenBorder {
+            distanceTop = gameDimensions.topLeft.y - bounds.max.y,
+            distanceBottom = bounds.min.y - gameDimensions.bottomLeft.y,
+            distanceLeft = bounds.min.x - gameDimensions.bottomLeft.x,
+            distanceRight = gameDimensions.bottomRight.x - bounds.max.x
+        };
+
+        return distance;
+    }
+
 
     //DEBUG from here onward
 

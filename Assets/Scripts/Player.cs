@@ -7,7 +7,7 @@ public class Player : MonoBehaviour, BaseEntity
     public float moveSpeed = 4f;
     public float moveProgression = 0.8f; //Used for Lerp
     ProjectileShooter shooter;
-    BoxCollider2D collider;
+    BoxCollider2D boxCollider;
 
     void BaseEntity.Destroy()
     {
@@ -18,7 +18,7 @@ public class Player : MonoBehaviour, BaseEntity
     void Start()
     {
         shooter = GetComponent<ProjectileShooter>();
-        collider = GetComponent<BoxCollider2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
     }
 
     // Update is called once per frame
@@ -37,10 +37,30 @@ public class Player : MonoBehaviour, BaseEntity
         float yInput = Input.GetAxisRaw("Vertical");
         float yMovement = yInput * this.moveSpeed * Time.deltaTime;
         Vector2 movement = new Vector2(xMovement, yMovement);
-        Bounds futureBounds = collider.bounds;
-        bool willBeInsideScreen = GameManager.instance.AreBoundsInsideScreen(collider.bounds, movement);
-        if (willBeInsideScreen) { 
-            transform.Translate(movement);
+        Vector2 clampedMovement = ClampMovementWithScreenBorders(movement, boxCollider.bounds);
+        transform.Translate(clampedMovement);
+        
+    }
+    
+    private Vector2 ClampMovementWithScreenBorders(Vector2 movement, Bounds bounds) { 
+        GameManager.DistanceToScreenBorder distances = GameManager.instance.GetBoundsDistanceToBorder(bounds);
+        Vector2 clampedMovement = new Vector2(movement.x, movement.y);
+        //Clamp left
+        if(movement.x<0 && distances.distanceLeft < Mathf.Abs(movement.x)) {
+            clampedMovement.x = -distances.distanceLeft;
         }
+        //Clamp right
+        if(movement.x>0 && distances.distanceRight < movement.x) {
+            clampedMovement.x = distances.distanceRight;
+        }
+        //Clamp top
+        if(movement.y>0 && distances.distanceTop < movement.y) {
+            clampedMovement.y = distances.distanceTop;
+        }
+        //Clamp bottom
+        if(movement.y<0 && distances.distanceBottom < Mathf.Abs(movement.y)) {
+            clampedMovement.y = -distances.distanceBottom;
+        }
+        return clampedMovement;
     }
 }
