@@ -24,6 +24,8 @@ public class ProjectileShooter : MonoBehaviour
 
     void CreateProjectile(Vector2 dir) {
         GameObject projectile = Instantiate(projectilePrefab, shootingPoint.transform.position, Quaternion.identity);
+        //projectile.transform.parent = transform; //Set "shooter" as parent of the projectile
+        projectile.transform.parent = GameManager.instance.transform; //Set "shooter" as parent of the projectile
         Projectile projectileScript = projectile.GetComponent<Projectile>();
         projectileScript.SetLauncher(this);
         projectileScript.damageLayer = damageLayer;

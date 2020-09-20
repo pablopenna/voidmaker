@@ -70,7 +70,7 @@ public class Enemy1 : MonoBehaviour, BaseEntity
 
     void UpdateDistanteToSpawn() {
         distanceToSpawn = Vector2.Distance(spawnPoint, transform.position);
-        print(Mathf.Approximately(distanceToSpawn, 0f));
+        //print(Mathf.Approximately(distanceToSpawn, 0f));
     }
 
     void UpdateDistanteToParent() {

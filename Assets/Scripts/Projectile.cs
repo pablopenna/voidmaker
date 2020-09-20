@@ -45,7 +45,7 @@ public class Projectile : MonoBehaviour
     }
 
     void RemoveIfOutOfScreen() { 
-        if(Mathf.Abs(transform.position.y) > 5) {
+        if(!GameManager.instance.IsPointInsideScreen(transform.position)) {
             launcher.RemoveProjectile(gameObject);
             Destroy(gameObject);
         }
@@ -53,6 +53,6 @@ public class Projectile : MonoBehaviour
 
     void OnDrawGizmos() {
         //DEBUG
-        //Gizmos.DrawSphere(transform.position, hitboxRadius);
+        Gizmos.DrawSphere(transform.position, hitboxRadius);
     }
 }
